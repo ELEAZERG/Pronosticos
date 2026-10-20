@@ -45,8 +45,9 @@ def prom_liga(liga):
 
 @st.cache_data(ttl=3600)
 def ultimos(team, liga, n, con_stats):
-    fx = api("fixtures", team=team, league=liga, season=SEASON, last=n)
-    fx = sorted(fx, key=lambda f: f["fixture"]["timestamp"])
+    fx = api("fixtures", team=team, league=liga, season=SEASON)
+    fx = [f for f in fx if f["fixture"]["status"]["short"] in ("FT", "AET", "PEN")]
+    fx = sorted(fx, key=lambda f: f["fixture"]["timestamp"])[-n:]
     out = {"gf": [], "gc": [], "goles": [], "corners": [], "tarjetas": []}
     for f in fx:
         local = f["teams"]["home"]["id"] == team
